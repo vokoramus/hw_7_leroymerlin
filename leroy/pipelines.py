@@ -53,6 +53,8 @@ class LeroyPhotosPipeline(ImagesPipeline):
         m = p.search(folder_name)
         article = m.group(1)
 
+        item['_id'] = article
+
         path_new = '/'.join([folder_name, path_standard[5:]])
         print()
         return path_new

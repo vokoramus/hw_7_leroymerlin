@@ -2,6 +2,7 @@ import scrapy
 from scrapy.http import HtmlResponse
 from leroy.items import LeroyItem
 from scrapy.loader import ItemLoader
+from leroy.settings import PRICE_FULL_SAVING
 
 
 class LeroymerlinSpider(scrapy.Spider):
@@ -20,8 +21,11 @@ class LeroymerlinSpider(scrapy.Spider):
     def parse_ads(self, response: HtmlResponse):
         loader = ItemLoader(item=LeroyItem(), response=response)
         loader.add_xpath('name', '//h1/span/text()')
-        # loader.add_xpath('price', '//div[@data-testid="prices_mf-pdp"]//span/text()')  # [цена, валюта, ед.изм.]
-        loader.add_xpath('price', '//div[@data-testid="prices_mf-pdp"]//span[@slot="price"]/text()')  # просто цена
+        if PRICE_FULL_SAVING:
+            loader.add_xpath('price', '//div[@data-testid="prices_mf-pdp"]//span/text()')  # [цена, валюта, ед.изм.]
+        else:
+            loader.add_xpath('price', '//div[@data-testid="prices_mf-pdp"]//span[@slot="price"]/text()')  # просто цена
+
         loader.add_value('url', response.url)
         loader.add_xpath('photos', '//picture[@slot="pictures"]/source[1]/@srcset')
 
