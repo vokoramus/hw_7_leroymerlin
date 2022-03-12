@@ -20,13 +20,12 @@ class LeroymerlinSpider(scrapy.Spider):
     def parse_ads(self, response: HtmlResponse):
         loader = ItemLoader(item=LeroyItem(), response=response)
         loader.add_xpath('name', '//h1/span/text()')
-        loader.add_xpath('price', '//div[@data-testid="prices_mf-pdp"]//span/text()')  # [цена, валюта, ед.изм.]
-        # loader.add_xpath('price', '//div[@data-testid="prices_mf-pdp"]//span[@slot="price"]')  # просто цена
+        # loader.add_xpath('price', '//div[@data-testid="prices_mf-pdp"]//span/text()')  # [цена, валюта, ед.изм.]
+        loader.add_xpath('price', '//div[@data-testid="prices_mf-pdp"]//span[@slot="price"]/text()')  # просто цена
         loader.add_value('url', response.url)
         loader.add_xpath('photos', '//picture[@slot="pictures"]/source[1]/@srcset')
 
-        # loader.add_xpath('characteristics', '//picture[@slot="pictures"]/source[1]/@srcset')
-        # //section[@id="characteristics"]//dl/div/dt/text()        # Характеристики
-        # //section[@id="characteristics"]//dl/div/dd/text()        # Значения
+        loader.add_xpath('characteristics_names', '//section[@id="characteristics"]//dl/div/dt/text()')
+        loader.add_xpath('characteristics_values', '//section[@id="characteristics"]//dl/div/dd/text()')
 
         yield loader.load_item()

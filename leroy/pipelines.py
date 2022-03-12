@@ -7,8 +7,11 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 import scrapy
+import re
 from scrapy.pipelines.images import ImagesPipeline
 from pymongo import MongoClient
+# from scrapy.pipelines.files import ...
+# from scrapy.pipelines.media import ...
 
 
 class LeroyPipeline:
@@ -26,14 +29,30 @@ class LeroyPipeline:
 
 class LeroyPhotosPipeline(ImagesPipeline):
     # нижеследующие методы мы просто переопределяем, а не создаем заново
-    def get_media_requests(self, item, info):
+    def get_media_requests(self, item, info):  # точка входа класса ImagesPipeline
         if item['photos']:
             for photo in item['photos']:
                 try:
-                    yield scrapy.Request(photo)  # создание новой сессии (в отличие от response в методе parse паука)
+                    yield scrapy.Request(photo)  # создание новой сессии (в отличие от response в методе parse паука), аналогичный метод работает при начальном запросе в файле паука
                 except Exception as e:
                     print(e)
 
     def item_completed(self, results, item, info):
         item['photos'] = [itm[1] for itm in results if itm[0]]
         return item
+
+    def file_path(self, request, response=None, info=None, *, item=None):
+        path_standard = super().file_path(request, response, info)
+
+            # folder_name
+        p = re.compile(r'\/([^\/]+)\/$')
+        m = p.search(item['url'])
+        folder_name = m.group(1)
+
+        p = re.compile(r'(\d+)$')
+        m = p.search(folder_name)
+        article = m.group(1)
+
+        path_new = '/'.join([folder_name, path_standard[5:]])
+        print()
+        return path_new

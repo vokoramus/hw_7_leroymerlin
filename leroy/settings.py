@@ -12,7 +12,7 @@ BOT_NAME = 'leroy'
 SPIDER_MODULES = ['leroy.spiders']
 NEWSPIDER_MODULE = 'leroy.spiders'
 
-IMAGES_STORE = 'photos'
+IMAGES_STORE = 'photos'  # имя директории, куда будут скачиваться фото. Иначе скачиваться фото не будут, даже в пайплайн не зайдет
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36'
@@ -67,8 +67,8 @@ COOKIES_ENABLED = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'leroy.pipelines.LeroyPhotosPipeline': 200,
-   'leroy.pipelines.LeroyPipeline': 300
+   'leroy.pipelines.LeroyPipeline': 300,
+   'leroy.pipelines.LeroyPhotosPipeline': 200
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
