@@ -13,7 +13,13 @@ class LeroymerlinSpider(scrapy.Spider):
         super().__init__(**kwargs)
         self.start_urls = [f'https://spb.leroymerlin.ru/search/?q={kwargs.get("search")}']
 
+
     def parse(self, response: HtmlResponse):
+        next_page = response.xpath('//a[@data-qa-pagination-item="right"]/@href').get()
+        print('+++++++++++++++++ next_page: +++++++++++++++++', next_page, '', sep='\n')
+        if next_page:
+            yield response.follow(next_page, callback=self.parse)
+
         links = response.xpath('//div[@data-qa-product]/a')
         for link in links:
             yield response.follow(link, callback=self.parse_ads)
@@ -28,8 +34,8 @@ class LeroymerlinSpider(scrapy.Spider):
 
         loader.add_value('url', response.url)
         loader.add_xpath('photos', '//picture[@slot="pictures"]/source[1]/@srcset')
-
-        loader.add_xpath('characteristics_names', '//section[@id="characteristics"]//dl/div/dt/text()')
-        loader.add_xpath('characteristics_values', '//section[@id="characteristics"]//dl/div/dd/text()')
+        # можно несколько запросов складывать в один LoaderItem (https://docs.scrapy.org/en/latest/topics/loaders.html)
+        loader.add_xpath('characteristics', '//section[@id="characteristics"]//dl/div/dt/text()')
+        loader.add_xpath('characteristics', '//section[@id="characteristics"]//dl/div/dd/text()')
 
         yield loader.load_item()

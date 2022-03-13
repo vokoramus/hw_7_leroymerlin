@@ -16,15 +16,28 @@ def price_to_int(price_list):
             price_list = [res] + price_list[1:]
         else:
             price_list = res
-        # print(price_list)
-        # print()
         return price_list
     except:
         return price_list
 
-    # def characteristics_to_dict():
-    #     for i in enumerate():
-    #     return
+
+def characteristics_to_dict(charact_list):
+    ''' в поле characteristics ItemLoader передает список:
+        - (первая половина списка) названия характеристик
+        - (первая половина списка) значения
+    Данный метод "соединяет" две половины списка, формируя словарь {"характеристика": "значение"},
+    сохраняемый в поле scrapy.Field "characteristics".
+    '''
+
+    try:
+        charact_dict = {}
+        half_len = len(charact_list)//2
+        for charact in range(half_len):
+            charact_dict[charact_list[charact]] = charact_list[charact + half_len]
+    except:
+        return charact_list
+    else:
+        return charact_dict
 
 
 class LeroyItem(scrapy.Item):
@@ -34,10 +47,7 @@ class LeroyItem(scrapy.Item):
     else:
         price = scrapy.Field(input_processor=Compose(price_to_int), output_processor=TakeFirst())
 
-    url = scrapy.Field(output_processor=TakeFirst())
-    photos = scrapy.Field()
-    characteristics_names = scrapy.Field()
-    characteristics_values = scrapy.Field()
-    # characteristics = scrapy.Field(input_processor=Compose(characteristics_to_dict))
-
     _id = scrapy.Field()
+    url = scrapy.Field(output_processor=TakeFirst())
+    characteristics = scrapy.Field(output_processor=Compose(characteristics_to_dict))
+    photos = scrapy.Field()

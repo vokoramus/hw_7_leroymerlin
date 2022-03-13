@@ -92,4 +92,4 @@ ITEM_PIPELINES = {
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-PRICE_FULL_SAVING = True
+PRICE_FULL_SAVING = False
